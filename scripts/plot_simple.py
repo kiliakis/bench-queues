@@ -73,7 +73,6 @@ if __name__ == '__main__':
 
     for exe, types in d.items():
         if('push' in exe):
-            print types
             x = types['producer'][0]
             y = types['producer'][1]
             err = types['producer'][2]
@@ -95,7 +94,7 @@ if __name__ == '__main__':
     plt.ylabel('Throughput (Mops/s)')
     plt.title('Pop benchmark')
 
-    for exe, types in d:
+    for exe, types in d.items():
         if('pop' in exe):
             x = types['consumer'][0]
             y = types['consumer'][1]
@@ -117,11 +116,11 @@ if __name__ == '__main__':
     plt.xlabel('Number of Threads')
     plt.ylabel('Throughput (Mops/s)')
     plt.title('Concurrent Push/Pop benchmark')    
-    for exe, types in d:
+    for exe, types in d.items():
         if('pop' not in exe) and ('push' not in exe):
-            x = types['consumer'][0]
-            y = types['consumer'][1] + types['producer'][1]
-            err = types['consumer'][2] + types['producer'][2]
+            x = np.array(types['consumer'][0])
+            y = np.array(types['consumer'][1]) + np.array(types['producer'][1])
+            err = np.array(types['consumer'][2]) + np.array(types['producer'][2])
             plot(x, y, exe, yerr=err)
 
     plt.legend(loc='best', fancybox=True, framealpha=0.5)
