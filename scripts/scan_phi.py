@@ -19,7 +19,7 @@ exe_list = ['boost-static', 'boost-static-push', 'boost-static-pop',
             'circularfifo', 'circularfifo-push', 'circularfifo-pop'
             ]
 # exe_list = ['histogram4']
-n_turns_list = ['1000']
+n_turns_list = ['100']
 # n_elements_list = ['10000']
 # n_threads_list = ['1', '2', '4', '8', '14', '28']
 n_threads_list = ['1', '4', '16', '32', '57', '114']
