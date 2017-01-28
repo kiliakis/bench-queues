@@ -10,7 +10,7 @@
 using namespace std;
 
 atomic<int> fence;
-typedef int data_t;
+typedef double data_t;
 vector<circ_buffer<data_t> > queues;
 vector<double> producer_times;
 vector<double> consumer_times;

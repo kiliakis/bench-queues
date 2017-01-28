@@ -11,7 +11,7 @@ import time
 
 project_dir = '/home/iliakis/git/bench-queues/'
 exe_dir = '/home/iliakis/bench-queues/'
-outfiles = '/home/iliakis/git/bench-queues/results/raw/v1/'
+outfiles = '/home/iliakis/git/bench-queues/results/raw/v-double/'
 
 exe_list = ['boost-static', 'boost-static-push', 'boost-static-pop',
             'boost-dynamic', 'boost-dynamic-push', 'boost-dynamic-pop',

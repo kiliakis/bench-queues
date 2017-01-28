@@ -11,15 +11,15 @@ import time
 
 project_dir = '/afs/cern.ch/work/k/kiliakis/git/thesis/bench-queues/'
 exe_dir = project_dir + 'build/bench-queues/'
-outfiles = '/afs/cern.ch/work/k/kiliakis/git/thesis/bench-queues/results/raw/v1/'
+outfiles = '/afs/cern.ch/work/k/kiliakis/git/thesis/bench-queues/results/raw/v-double/'
 
-# exe_list = ['boost-static', 'boost-static-push', 'boost-static-pop',
-#             'boost-dynamic', 'boost-dynamic-push', 'boost-dynamic-pop',
-#             'folly', 'folly-push', 'folly-pop',
-#             'circularfifo', 'circularfifo-push', 'circularfifo-pop'
-#             ]
+exe_list = ['boost-static', 'boost-static-push', 'boost-static-pop',
+             'boost-dynamic', 'boost-dynamic-push', 'boost-dynamic-pop',
+             'folly', 'folly-push', 'folly-pop',
+             'circularfifo', 'circularfifo-push', 'circularfifo-pop'
+             ]
 
-exe_list = ['boost-static-push', 'boost-dynamic-push']
+#exe_list = ['boost-static-push', 'boost-dynamic-push']
 # exe_list = ['histogram4']
 n_turns_list = ['1000']
 # n_elements_list = ['10000']
