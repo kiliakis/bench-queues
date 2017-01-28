@@ -83,7 +83,7 @@ foreach(src ${EXECUTABLE_FILES})
    string( REPLACE ".cpp" "" testname ${src})
    string( REGEX REPLACE "tests/" "" testname ${testname})
    add_executable( ${testname} ${src})
-   # set_target_properties(${testname} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_PROJECT_NAME})
+   set_target_properties(${testname} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_PROJECT_NAME})
    # target_link_libraries( ${testname} ${LIBRARIES})
 endforeach()
 

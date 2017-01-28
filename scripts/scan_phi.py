@@ -10,7 +10,7 @@ import time
 #    '38 11 39 12 40 13 41 14 42 15 43 16 44 17 45 18 46 19 47 20 48 21 49 22 50 23 51 24 52 25 53 26 54 27 55'
 
 project_dir = '/home/iliakis/git/bench-queues/'
-exe_dir = project_dir + 'build_phi/'
+exe_dir = '/home/iliakis/bench-queues/'
 outfiles = '/home/iliakis/git/bench-queues/results/raw/v1/'
 
 exe_list = ['boost-static', 'boost-static-push', 'boost-static-pop',
@@ -22,10 +22,10 @@ exe_list = ['boost-static', 'boost-static-push', 'boost-static-pop',
 n_turns_list = ['1000']
 # n_elements_list = ['10000']
 # n_threads_list = ['1', '2', '4', '8', '14', '28']
-n_threads_list = ['1', '2', '4', '8', '16', '32', '64', '114']
+n_threads_list = ['1', '4', '16', '32', '57', '114']
 repeats = 10
 
-os.chdir(exe_dir)
+# os.chdir(exe_dir)
 total_sims = len(n_turns_list) * len(n_threads_list) * len(exe_list) * repeats
 print "Total runs: ", total_sims
 
@@ -46,7 +46,11 @@ for exe in exe_list:
             stdout = open(outdir + name+'.stdout', 'w')
             # stderr = open(outdir + name+'.stderr', 'w')
             for i in range(0, repeats):
-                exe_args = ['./'+exe,
+                exe_args = ['ssh',
+                            'mic0',
+                            '/home/iliakis/export-and-exec.sh',
+                            'cmd',
+                            exe_dir + exe,
                             '-e' + n_elems,
                             '-b' + '10000',
                             '-t' + n_turns,
