@@ -73,37 +73,34 @@ int main(int argc, char *argv[])
     cout << "Number of threads: " <<  N_threads << "\n";
     // cout << "Buffer size: " <<  buf_size << "\n";
 
-    // producer_times.resize(N_threads, 0);
-    consumer_times.resize(N_threads, 0);
+    producer_times.resize(N_threads, 0);
+    // consumer_times.resize(N_threads, 0);
 
     for (int t = 0; t < N_turns; t++) {
         vector<thread> threads;
         fence.store(0);
         for (int i = 0; i < N_threads; i++) {
             queues.push_back(circ_buffer<data_t>(N_elems + 1, 0));
-            for(int j = 0; j< N_elems; j++){
-                queues[i].push(j);
-            }
         }
         for (int i = 0; i < N_threads; i++) {
-            // threads.push_back(thread(producer, i));
-            threads.push_back(thread(consumer, i));
+            threads.push_back(thread(producer, i));
+            // threads.push_back(thread(consumer, i));
         }
         for (auto &th : threads) th.join();
         queues.clear();
     }
 
-    // for (auto &t : producer_times) t = t / N_turns;
-    for (auto &t : consumer_times) t = t / N_turns;
+    for (auto &t : producer_times) t = t / N_turns;
+    // for (auto &t : consumer_times) t = t / N_turns;
 
-    // auto mean_producer_time = mean(producer_times);
-    // auto std_producer_time = stdev(producer_times, mean_producer_time);
+    auto mean_producer_time = mean(producer_times);
+    auto std_producer_time = stdev(producer_times, mean_producer_time);
 
-    auto mean_consumer_time = mean(consumer_times);
-    auto std_consumer_time = stdev(consumer_times, mean_consumer_time);
+    // auto mean_consumer_time = mean(consumer_times);
+    // auto std_consumer_time = stdev(consumer_times, mean_consumer_time);
 
-    // double mean_producer_throughput = N_turns * N_elems / mean_producer_time / 1e6;
-    double mean_consumer_throughput = N_turns * N_elems / mean_consumer_time / 1e6;
+    double mean_producer_throughput = N_turns * N_elems / mean_producer_time / 1e6;
+    // double mean_consumer_throughput = N_turns * N_elems / mean_consumer_time / 1e6;
 
     // cout << "folly dynamic\n";
 
@@ -112,13 +109,11 @@ int main(int argc, char *argv[])
 
     // cout << "mean producer time/operation: " << 1e12 * mean_producer_time / N_turns / N_elems << " picosec\n";
     // cout << "mean producer time/operation std: " << 1e12 * std_producer_time / N_turns / N_elems << " picosec\n";
-    // cout << "mean producer throughput: " << mean_producer_throughput << " Melems/sec\n";
+    cout << "mean producer throughput: " << mean_producer_throughput << " Melems/sec\n";
 
     // cout << "mean consumer time: " << mean_consumer_time << " sec\n";
     // cout << "mean consumer time std: " << std_consumer_time << " sec\n";
-    // cout << "mean consumer time/operation: " << 1e12 * mean_consumer_time / N_turns / N_elems << " picosec\n";
-    // cout << "mean consumer time/operation std: " << 1e12 * std_consumer_time / N_turns / N_elems << " picosec\n";
-    cout << "mean consumer throughput: " << mean_consumer_throughput << " Melems/sec\n";
+    // cout << "mean consumer throughput: " << mean_consumer_throughput << " Melems/sec\n";
 
     return 0;
 }

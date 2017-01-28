@@ -46,7 +46,7 @@ def extract_results(input, out):
                 percent = 100.0 * np.std(v) / np.mean(v)
                 if percent > 10:
                     print "The previous file has %.2f %% error" % percent
-    records.sort(key=lambda a: (a[0], int(a[1]), int(a[2])))
+    records.sort(key=lambda a: (a[0], int(a[1]), a[2]))
     writer = csv.writer(open(out, 'w'), lineterminator='\n', delimiter=',')
     writer.writerow(header)
     writer.writerows(records)
