@@ -24,7 +24,7 @@ void parse_args(int argc, char **argv);
 void producer(int id)
 {
     fence++;
-    while (fence < 2 * N_threads) ;
+    while (fence < N_threads) ;
 
     chrono::time_point<chrono::high_resolution_clock> start;
     chrono::duration<double> elapsed_time(0.0);
@@ -32,12 +32,12 @@ void producer(int id)
 
     long int i = 0;
     while (i < N_elems) {
-        if (queues[id].push_batch(i))
+        if (queues[id].push(i))
             i++;
     }
     // printf("[Producer %d] Going for the last push!\n", id);
 
-    queues[id].push_final();
+    // queues[id].push_final();
 
     elapsed_time = chrono::system_clock::now() - start;
     producer_times[id] += elapsed_time.count();
@@ -48,7 +48,7 @@ void producer(int id)
 void consumer(int id)
 {
     fence++;
-    while (fence < 2 * N_threads) ;
+    while (fence < N_threads) ;
     chrono::time_point<chrono::high_resolution_clock> start;
     chrono::duration<double> elapsed_time(0.0);
     start = chrono::system_clock::now();
@@ -57,12 +57,12 @@ void consumer(int id)
     auto f = [](data_t e) {return;};
 
     while (i < N_elems) {
-        data_t res;
-        // i += queues[id].consume_all(f);
+        // data_t res;
+        i += queues[id].consume_batch(f);
         // cout << i << "\n";
-        if (queues[id].pop(res)) {
-            i++;
-        }
+        // if (queues[id].pop(res)) {
+        //     i++;
+        // }
     }
 
     elapsed_time = chrono::system_clock::now() - start;
@@ -79,48 +79,50 @@ int main(int argc, char *argv[])
     cout << "Number of threads: " <<  N_threads << "\n";
 
     producer_times.resize(N_threads, 0);
-    consumer_times.resize(N_threads, 0);
+    // consumer_times.resize(N_threads, 0);
 
     for (int i = 0; i < N_threads; i++) {
         queues.push_back(circ_buffer<data_t>(1000, 100));
     }
 
     for (int t = 0; t < N_turns; t++) {
-        // cout << "Starting turn " << t << "\n";
         vector<thread> threads;
         fence.store(0);
         for (int i = 0; i < N_threads; i++) {
+            queues.push_back(circ_buffer<data_t>(N_elems + 1, 100));
+        }
+        for (int i = 0; i < N_threads; i++) {
             threads.push_back(thread(producer, i));
-            threads.push_back(thread(consumer, i));
+            // threads.push_back(thread(consumer, i));
         }
         for (auto &th : threads) th.join();
+        queues.clear();
     }
 
-    // for (auto &t : producer_times) t = t / N_turns;
+for (auto &t : producer_times) t = t / N_turns;
     // for (auto &t : consumer_times) t = t / N_turns;
 
     auto mean_producer_time = mean(producer_times);
     auto std_producer_time = stdev(producer_times, mean_producer_time);
 
-    auto mean_consumer_time = mean(consumer_times);
-    auto std_consumer_time = stdev(consumer_times, mean_consumer_time);
+    // auto mean_consumer_time = mean(consumer_times);
+    // auto std_consumer_time = stdev(consumer_times, mean_consumer_time);
 
     double mean_producer_throughput = N_turns * N_elems / mean_producer_time / 1e6;
-    double mean_consumer_throughput = N_turns * N_elems / mean_consumer_time / 1e6;
+    // double mean_consumer_throughput = N_turns * N_elems / mean_consumer_time / 1e6;
 
-    // cout << "boost static\n";
+    // cout << "folly dynamic\n";
 
     // cout << "mean producer time: " << mean_producer_time << " sec\n";
     // cout << "mean producer time std: " << std_producer_time << " sec\n";
+
+    // cout << "mean producer time/operation: " << 1e12 * mean_producer_time / N_turns / N_elems << " picosec\n";
+    // cout << "mean producer time/operation std: " << 1e12 * std_producer_time / N_turns / N_elems << " picosec\n";
     cout << "mean producer throughput: " << mean_producer_throughput << " Melems/sec\n";
 
     // cout << "mean consumer time: " << mean_consumer_time << " sec\n";
     // cout << "mean consumer time std: " << std_consumer_time << " sec\n";
-    cout << "mean consumer throughput: " << mean_consumer_throughput << " Melems/sec\n";
-
-    cout << "mean total throughput: "
-         << mean_consumer_throughput + mean_producer_throughput
-         << " Melems/sec\n";
+    // cout << "mean consumer throughput: " << mean_consumer_throughput << " Melems/sec\n";
 
     return 0;
 }

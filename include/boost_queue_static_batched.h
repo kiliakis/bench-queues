@@ -4,15 +4,16 @@
 #include <stdio.h>
 #include <thread>         // std::this_thread::sleep_for
 #include <chrono>         // std::chrono::seconds
+#include <iostream>
 
 #ifdef QUEUE_SIZE
 static int const queue_size = QUEUE_SIZE;
 #else
-static int const queue_size = 10001;
+static int const queue_size = 100000;
 #endif
-static int const buffer_size = 100;
+static int const buffer_size = queue_size / 100;
 //#define queue_size 10000
-//const size_t queue_size = 2000;
+// const size_t queue_size = 2000;
 // using namespace boost::lockfree;
 template<class T>
 class circ_buffer {
@@ -40,7 +41,8 @@ public:
     };
 
     ~circ_buffer() {};
-    bool push(T const &val);
+    bool push(T const &val) const;
+    bool push_batch(T const &val);
     void push_final();
     bool pop(T &val) const;
 
@@ -53,7 +55,7 @@ public:
 
 
 template<class T>
-bool circ_buffer<T>::push(T const &val)
+bool circ_buffer<T>::push_batch(T const &val)
 {
     buffer[i] = val;
     i++;
@@ -63,19 +65,45 @@ bool circ_buffer<T>::push(T const &val)
     }
 
     // if (i == limit) {
+    //     i = 0;
     //     while ((limit = queue->push(buffer, buffer_size)) == 0)
     //         ;
-    //     i = 0;
     // }
+
 
     return true;
 }
 
 template<class T>
+bool circ_buffer<T>::push(T const &val) const
+{
+    return queue->push(val);
+}
+
+template<class T>
 void circ_buffer<T>::push_final()
 {
-    while (i != 0)
-        i -= queue->push(buffer, i);
+    int j = 0;
+    while (i != 0) {
+        auto pushed = queue->push(&buffer[j], i);
+        j += pushed;
+        i -= pushed;
+    }
+    // std::cout << "i is " << i << " and limit is " << limit << "\n";
+//     int j = 0;
+//     while (i != 0) {
+//         auto pushed = queue->push(&buffer[j], i);
+//         i -= pushed;
+//         j += pushed;
+//     }
+//     // buffer = &buffer[limit]
+//     j = limit;
+//     i = buffer_size - limit;
+//     while (i != 0) {
+//         auto pushed = queue->push(&buffer[j], i);
+//         i -= pushed;
+//         j += pushed;
+//     }
 }
 
 
@@ -97,5 +125,5 @@ int circ_buffer<T>::consume_batch(const Functor &f) const
 template<class T> template<class Functor>
 int circ_buffer<T>::consume_all(const Functor &f) const
 {
-    queue->consume_all(f);
+    return queue->consume_all(f);
 }
