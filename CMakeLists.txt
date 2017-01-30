@@ -68,9 +68,9 @@ set(EXECUTABLE_FILES
    tests/folly-push.cpp
    tests/folly-pop.cpp
    tests/boost-static.cpp
-   tests/boost-static-batched.cpp
-   tests/boost-static-batched-push.cpp
-   tests/boost-static-batched-pop.cpp
+   # tests/boost-static-batched.cpp
+   # tests/boost-static-batched-push.cpp
+   # tests/boost-static-batched-pop.cpp
    tests/boost-static-push.cpp
    tests/boost-static-pop.cpp
    tests/boost-dynamic.cpp
@@ -79,6 +79,9 @@ set(EXECUTABLE_FILES
    tests/circularfifo.cpp
    tests/circularfifo-push.cpp
    tests/circularfifo-pop.cpp
+   tests/cameron-pop.cpp
+   tests/cameron-push.cpp
+   tests/cameron.cpp
    )
 
 

@@ -13,12 +13,14 @@ project_dir = '/home/iliakis/git/bench-queues/'
 exe_dir = '/home/iliakis/bench-queues/'
 outfiles = '/home/iliakis/git/bench-queues/results/raw/v-pair/'
 
-exe_list = ['boost-static', 'boost-static-push', 'boost-static-pop',
-            'boost-dynamic', 'boost-dynamic-push', 'boost-dynamic-pop',
-            'folly', 'folly-push', 'folly-pop',
-            'circularfifo', 'circularfifo-push', 'circularfifo-pop'
-            ]
-# exe_list = ['histogram4']
+# exe_list = ['boost-static', 'boost-static-push', 'boost-static-pop',
+#             'boost-dynamic', 'boost-dynamic-push', 'boost-dynamic-pop',
+#             'folly', 'folly-push', 'folly-pop',
+#             'circularfifo', 'circularfifo-push', 'circularfifo-pop'
+#             ]
+
+exe_list = ['cameron', 'cameron-push', 'cameron-pop']
+
 n_turns_list = ['10']
 # n_elements_list = ['10000']
 # n_threads_list = ['1', '2', '4', '8', '14', '28']

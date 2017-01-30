@@ -19,9 +19,7 @@ outfiles = '/afs/cern.ch/work/k/kiliakis/git/thesis/bench-queues/results/raw/v-p
 #             'circularfifo', 'circularfifo-push', 'circularfifo-pop'
 #             ]
 
-exe_list = ['folly-push', 'folly-pop',
-            'circularfifo', 'circularfifo-push', 'circularfifo-pop'
-            ]
+exe_list = ['cameron', 'cameron-push', 'cameron-pop']
 
 # exe_list = ['circularfifo-push', 'circularfifo-pop' ]
 # exe_list = ['histogram4']
