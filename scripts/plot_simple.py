@@ -55,8 +55,8 @@ if __name__ == '__main__':
         exe = line[0]
         threads = int(line[1])
         types = line[2]
-        throughput = float(line[-2]) / 1000.0
-        stdev = float(line[-1]) / 1000.0
+        throughput = float(line[-2])
+        stdev = float(line[-1])
         if(exe not in d):
             d[exe] = {}
         if(types not in d[exe]):
@@ -68,7 +68,7 @@ if __name__ == '__main__':
     plt.figure()
     # plt.tick_params(labelright=True)
     plt.xlabel('Number of Threads')
-    plt.ylabel('Throughput (Bops/s)')
+    plt.ylabel('Throughput (Mops/s)')
     plt.title('Push benchmark')
 
     for exe in sorted(d):
@@ -87,7 +87,7 @@ if __name__ == '__main__':
     plt.figure()
     # plt.tick_params(labelright=True)
     plt.xlabel('Number of Threads')
-    plt.ylabel('Throughput (Bops/s)')
+    plt.ylabel('Throughput (Mops/s)')
     plt.title('Pop benchmark')
 
     for exe in sorted(d):
@@ -106,7 +106,7 @@ if __name__ == '__main__':
     plt.figure()
     # plt.tick_params(labelright=True)
     plt.xlabel('Number of Threads')
-    plt.ylabel('Throughput (Bops/s)')
+    plt.ylabel('Throughput (Mops/s)')
     plt.title('Concurrent Push/Pop benchmark')
     for exe in sorted(d):
         types = d[exe]
