@@ -32,9 +32,9 @@ print "Total runs: ", total_sims
 current_sim = 0
 for exe in exe_list:
     if('push' in exe) or ('pop' in exe):
-        n_elems = '100000'
+        n_elems = '10000'
     else:
-        n_elems = '1000000'
+        n_elems = '100000'
     for n_turns in n_turns_list:
         for n_threads in n_threads_list:
             outdir = outfiles
