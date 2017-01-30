@@ -13,9 +13,13 @@ project_dir = '/afs/cern.ch/work/k/kiliakis/git/thesis/bench-queues/'
 exe_dir = project_dir + 'build/bench-queues/'
 outfiles = '/afs/cern.ch/work/k/kiliakis/git/thesis/bench-queues/results/raw/v-pair/'
 
-exe_list = ['boost-static', 'boost-static-push', 'boost-static-pop',
-            'boost-dynamic', 'boost-dynamic-push', 'boost-dynamic-pop',
-            'folly', 'folly-push', 'folly-pop',
+# exe_list = ['boost-static', 'boost-static-push', 'boost-static-pop',
+#             'boost-dynamic', 'boost-dynamic-push', 'boost-dynamic-pop',
+#             'folly', 'folly-push', 'folly-pop',
+#             'circularfifo', 'circularfifo-push', 'circularfifo-pop'
+#             ]
+
+exe_list = ['folly-push', 'folly-pop',
             'circularfifo', 'circularfifo-push', 'circularfifo-pop'
             ]
 

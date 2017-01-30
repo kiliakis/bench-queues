@@ -18,7 +18,7 @@ vector<double> consumer_times;
 
 long int N_turns = 1;
 long int N_elems = 100000;
-long int buf_size = 10000;
+long int buf_size = 100000;
 int N_threads = 1;
 
 void parse_args(int argc, char **argv);
@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
         vector<thread> threads;
         fence.store(0);
         for (int i = 0; i < N_threads; i++) {
-            queues.push_back(circ_buffer<data_t>(N_elems, 100));
+            queues.push_back(circ_buffer<data_t>(N_elems+1, 100));
         }
         for (int i = 0; i < N_threads; i++) {
             threads.push_back(thread(producer, i));

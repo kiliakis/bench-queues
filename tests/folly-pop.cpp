@@ -82,7 +82,7 @@ int main(int argc, char *argv[])
         vector<thread> threads;
         fence.store(0);
         for (int i = 0; i < N_threads; i++) {
-            queues.push_back(circ_buffer<data_t>(N_elems, 100));
+            queues.push_back(circ_buffer<data_t>(N_elems+1, 100));
             for(long int j = 0; j< N_elems; j++){
                 queues[i].push({j, j});
             }
