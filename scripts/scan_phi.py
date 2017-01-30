@@ -11,7 +11,7 @@ import time
 
 project_dir = '/home/iliakis/git/bench-queues/'
 exe_dir = '/home/iliakis/bench-queues/'
-outfiles = '/home/iliakis/git/bench-queues/results/raw/v-double/'
+outfiles = '/home/iliakis/git/bench-queues/results/raw/v-pair/'
 
 exe_list = ['boost-static', 'boost-static-push', 'boost-static-pop',
             'boost-dynamic', 'boost-dynamic-push', 'boost-dynamic-pop',
@@ -19,7 +19,7 @@ exe_list = ['boost-static', 'boost-static-push', 'boost-static-pop',
             'circularfifo', 'circularfifo-push', 'circularfifo-pop'
             ]
 # exe_list = ['histogram4']
-n_turns_list = ['100']
+n_turns_list = ['10']
 # n_elements_list = ['10000']
 # n_threads_list = ['1', '2', '4', '8', '14', '28']
 n_threads_list = ['1', '4', '16', '32', '57', '114']
@@ -32,9 +32,9 @@ print "Total runs: ", total_sims
 current_sim = 0
 for exe in exe_list:
     if('push' in exe) or ('pop' in exe):
-        n_elems = '10000'
-    else:
         n_elems = '100000'
+    else:
+        n_elems = '1000000'
     for n_turns in n_turns_list:
         for n_threads in n_threads_list:
             outdir = outfiles
@@ -52,7 +52,7 @@ for exe in exe_list:
                             'cmd',
                             exe_dir + exe,
                             '-e' + n_elems,
-                            '-b' + '10000',
+                            '-b' + '100000',
                             '-t' + n_turns,
                             '-m' + n_threads
                             ]
