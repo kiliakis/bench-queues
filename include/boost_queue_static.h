@@ -8,7 +8,7 @@
 #ifdef QUEUE_SIZE
 static int const queue_size = QUEUE_SIZE;
 #else
-static int const queue_size = 10001;
+static int const queue_size = 100000;
 #endif
 //#define queue_size 10000
 //const size_t queue_size = 2000;

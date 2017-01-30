@@ -4,13 +4,15 @@
 #include <chrono>
 #include <folly.h>
 #include <utilities.h>
+#include <utility>
 #include <thread>
 #include <atomic>
 
 using namespace std;
 
 atomic<int> fence;
-typedef double data_t;
+typedef std::pair<uint64_t, uint64_t> data_t;
+
 vector<circ_buffer<data_t> > queues;
 vector<double> producer_times;
 vector<double> consumer_times;
@@ -33,7 +35,7 @@ void producer(int id)
 
     long int i = 0;
     while (i < N_elems) {
-        if (queues[id].push(i))
+        if (queues[id].push({i, i}))
             i++;
     }
 
@@ -80,9 +82,9 @@ int main(int argc, char *argv[])
         vector<thread> threads;
         fence.store(0);
         for (int i = 0; i < N_threads; i++) {
-            queues.push_back(circ_buffer<data_t>(N_elems + 1, 0));
-            for(int j = 0; j< N_elems; j++){
-                queues[i].push(j);
+            queues.push_back(circ_buffer<data_t>(N_elems, 100));
+            for(long int j = 0; j< N_elems; j++){
+                queues[i].push({j, j});
             }
         }
         for (int i = 0; i < N_threads; i++) {
@@ -94,13 +96,13 @@ int main(int argc, char *argv[])
     }
 
     // for (auto &t : producer_times) t = t / N_turns;
-    for (auto &t : consumer_times) t = t / N_turns;
+    // for (auto &t : consumer_times) t = t / N_turns;
 
     // auto mean_producer_time = mean(producer_times);
     // auto std_producer_time = stdev(producer_times, mean_producer_time);
 
     auto mean_consumer_time = mean(consumer_times);
-    auto std_consumer_time = stdev(consumer_times, mean_consumer_time);
+    // auto std_consumer_time = stdev(consumer_times, mean_consumer_time);
 
     // double mean_producer_throughput = N_turns * N_elems / mean_producer_time / 1e6;
     double mean_consumer_throughput = N_turns * N_elems / mean_consumer_time / 1e6;

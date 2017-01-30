@@ -5,11 +5,16 @@
 #include <thread>         // std::this_thread::sleep_for
 #include <chrono>         // std::chrono::seconds
 
+#ifdef QUEUE_SIZE
+static int const queue_size = QUEUE_SIZE;
+#else
+static int const queue_size = 100000;
+#endif
 
 template<class T>
 class circ_buffer {
 private:
-    fifo::CircularFifo<T> *queue;
+    fifo::CircularFifo<T, queue_size> *queue;
     uint32_t piece_size, size;
     uint32_t sleep;
 
@@ -20,7 +25,7 @@ public:
     {
         sleep = 100;
         piece_size = _piece_size;
-        queue = new fifo::CircularFifo<T>(size);
+        queue = new fifo::CircularFifo<T, queue_size>();
 
     };
 

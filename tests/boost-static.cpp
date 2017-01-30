@@ -10,13 +10,15 @@
 using namespace std;
 
 atomic<int> fence;
-typedef double data_t;
+typedef std::pair<uint64_t, uint64_t> data_t;
+
 vector<circ_buffer<data_t> > queues;
 vector<double> producer_times;
 vector<double> consumer_times;
 
 long int N_turns = 1;
 long int N_elems = 100000;
+long int buf_size = 10000;
 int N_threads = 1;
 
 void parse_args(int argc, char **argv);
@@ -32,7 +34,7 @@ void producer(int id)
 
     long int i = 0;
     while (i < N_elems) {
-        if (queues[id].push(i))
+        if (queues[id].push({i, i}))
             i++;
     }
 
@@ -70,12 +72,13 @@ int main(int argc, char *argv[])
     cout << "Number of turns: " <<  N_turns << "\n";
     cout << "Number of elements: " << N_elems << "\n";
     cout << "Number of threads: " <<  N_threads << "\n";
+    cout << "Buffer size: " <<  buf_size << "\n";
 
     producer_times.resize(N_threads, 0);
     consumer_times.resize(N_threads, 0);
 
     for (int i = 0; i < N_threads; i++) {
-        queues.push_back(circ_buffer<data_t>(1000, 0));
+        queues.push_back(circ_buffer<data_t>(buf_size, 0));
     }
 
     for (int t = 0; t < N_turns; t++) {
@@ -88,19 +91,19 @@ int main(int argc, char *argv[])
         for (auto &th : threads) th.join();
     }
 
-    for (auto &t : producer_times) t = t / N_turns;
-    for (auto &t : consumer_times) t = t / N_turns;
+    // for (auto &t : producer_times) t = t / N_turns;
+    // for (auto &t : consumer_times) t = t / N_turns;
 
     auto mean_producer_time = mean(producer_times);
-    auto std_producer_time = stdev(producer_times, mean_producer_time);
+    // auto std_producer_time = stdev(producer_times, mean_producer_time);
 
     auto mean_consumer_time = mean(consumer_times);
-    auto std_consumer_time = stdev(consumer_times, mean_consumer_time);
+    // auto std_consumer_time = stdev(consumer_times, mean_consumer_time);
 
     double mean_producer_throughput = N_turns * N_elems / mean_producer_time / 1e6;
     double mean_consumer_throughput = N_turns * N_elems / mean_consumer_time / 1e6;
 
-    // cout << "boost static\n";
+    // cout << "boost dynamic\n";
 
     // cout << "mean producer time: " << mean_producer_time << " sec\n";
     // cout << "mean producer time std: " << std_producer_time << " sec\n";
@@ -113,7 +116,7 @@ int main(int argc, char *argv[])
     cout << "mean total throughput: "
          << mean_consumer_throughput + mean_producer_throughput
          << " Melems/sec\n";
-    
+
     return 0;
 }
 
@@ -129,6 +132,7 @@ void parse_args(int argc, char **argv)
         N_THREADS,
         N_TURNS,
         N_ELEMENTS,
+        BUF_SIZE,
         OPTIONS_NUM
     };
 
@@ -149,6 +153,11 @@ void parse_args(int argc, char **argv)
             N_ELEMENTS, 0, "e", "elements", util::Arg::Numeric,
             "  --elements=<num>,   -e <num>  Number of elements (default: "
             "100k)"
+        },
+        {
+            BUF_SIZE, 0, "b", "buf_size", util::Arg::Numeric,
+            "  --buf_size=<num>,   -b <num>  Buffer size (default: "
+            "1000)"
         },
         {
             N_THREADS, 0, "m", "threads", util::Arg::Numeric,
@@ -187,6 +196,10 @@ void parse_args(int argc, char **argv)
                 break;
             case N_THREADS:
                 N_threads = atoi(opt.arg);
+                // fprintf(stdout, "--numeric with argument '%s'\n", opt.arg);
+                break;
+            case BUF_SIZE:
+                buf_size = atoi(opt.arg);
                 // fprintf(stdout, "--numeric with argument '%s'\n", opt.arg);
                 break;
             case N_ELEMENTS:

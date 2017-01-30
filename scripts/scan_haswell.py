@@ -11,17 +11,17 @@ import time
 
 project_dir = '/afs/cern.ch/work/k/kiliakis/git/thesis/bench-queues/'
 exe_dir = project_dir + 'build/bench-queues/'
-outfiles = '/afs/cern.ch/work/k/kiliakis/git/thesis/bench-queues/results/raw/v-double/'
+outfiles = '/afs/cern.ch/work/k/kiliakis/git/thesis/bench-queues/results/raw/v-pair/'
 
-#exe_list = ['boost-static', 'boost-static-push', 'boost-static-pop',
-#             'boost-dynamic', 'boost-dynamic-push', 'boost-dynamic-pop',
-#             'folly', 'folly-push', 'folly-pop',
-#             'circularfifo', 'circularfifo-push', 'circularfifo-pop'
-#             ]
+exe_list = ['boost-static', 'boost-static-push', 'boost-static-pop',
+            'boost-dynamic', 'boost-dynamic-push', 'boost-dynamic-pop',
+            'folly', 'folly-push', 'folly-pop',
+            'circularfifo', 'circularfifo-push', 'circularfifo-pop'
+            ]
 
-exe_list = ['circularfifo-push', 'circularfifo-pop' ]
+# exe_list = ['circularfifo-push', 'circularfifo-pop' ]
 # exe_list = ['histogram4']
-n_turns_list = ['1000']
+n_turns_list = ['10']
 # n_elements_list = ['10000']
 n_threads_list = ['1', '2', '4', '8', '14', '28']
 repeats = 10

@@ -10,16 +10,16 @@
 using namespace std;
 
 atomic<int> fence;
-typedef double data_t;
+typedef std::pair<uint64_t, uint64_t> data_t;
+
 vector<circ_buffer<data_t> > queues;
 vector<double> producer_times;
 vector<double> consumer_times;
 
 long int N_turns = 1;
 long int N_elems = 100000;
-int N_threads = 1;
 long int buf_size = 10000;
-
+int N_threads = 1;
 
 void parse_args(int argc, char **argv);
 
@@ -34,7 +34,7 @@ void producer(int id)
 
     long int i = 0;
     while (i < N_elems) {
-        if (queues[id].push(i))
+        if (queues[id].push({i, i}))
             i++;
     }
 
@@ -91,19 +91,19 @@ int main(int argc, char *argv[])
         for (auto &th : threads) th.join();
     }
 
-    for (auto &t : producer_times) t = t / N_turns;
-    for (auto &t : consumer_times) t = t / N_turns;
+    // for (auto &t : producer_times) t = t / N_turns;
+    // for (auto &t : consumer_times) t = t / N_turns;
 
     auto mean_producer_time = mean(producer_times);
-    auto std_producer_time = stdev(producer_times, mean_producer_time);
+    // auto std_producer_time = stdev(producer_times, mean_producer_time);
 
     auto mean_consumer_time = mean(consumer_times);
-    auto std_consumer_time = stdev(consumer_times, mean_consumer_time);
+    // auto std_consumer_time = stdev(consumer_times, mean_consumer_time);
 
     double mean_producer_throughput = N_turns * N_elems / mean_producer_time / 1e6;
     double mean_consumer_throughput = N_turns * N_elems / mean_consumer_time / 1e6;
 
-    // cout << "circularfifo dynamic\n";
+    // cout << "boost dynamic\n";
 
     // cout << "mean producer time: " << mean_producer_time << " sec\n";
     // cout << "mean producer time std: " << std_producer_time << " sec\n";

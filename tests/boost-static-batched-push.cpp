@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
         queues.clear();
     }
 
-for (auto &t : producer_times) t = t / N_turns;
+    // for (auto &t : producer_times) t = t / N_turns;
     // for (auto &t : consumer_times) t = t / N_turns;
 
     auto mean_producer_time = mean(producer_times);
