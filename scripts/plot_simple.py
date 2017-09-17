@@ -103,7 +103,7 @@ if __name__ == '__main__':
     plt.tight_layout()
     plt.close()
 
-    plt.figure()
+    plt.figure(figsize=(7, 3.))
     # plt.tick_params(labelright=True)
     plt.xlabel('Number of Threads')
     plt.ylabel('Throughput (Mops/s)')
