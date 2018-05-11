@@ -130,7 +130,7 @@ if __name__ == '__main__':
 
     plt.xticks(x, x)
             
-    plt.legend(loc='upper left', fancybox=True, framealpha=0.4, fontsize='9')
+    plt.legend(loc='upper left', fancybox=True, framealpha=1, fontsize='9')
     plt.tight_layout()
     plt.savefig(outdir + '/concurrent-haswell.pdf', bbox_inches='tight', dpi=300)
     plt.show()
