@@ -118,6 +118,7 @@ if __name__ == '__main__':
     plt.xlabel('# Threads')
     plt.ylabel('Throughput (GOps/s)')
     # plt.title('Concurrent Push/Pop benchmark')
+
     for exe in sorted(d):
         types = d[exe]
         if('pop' not in exe) and ('push' not in exe):
