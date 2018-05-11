@@ -22,7 +22,7 @@ outfiles = '/home/iliakis/git/bench-queues/results/raw/pair2/'
 exe_list = ['boost-static', 'boost-dynamic', 'cameron', 'folly', 'circularfifo']
 # exe_list = ['cameron', 'cameron-push', 'cameron-pop']
 
-n_turns_list = ['1000']
+n_turns_list = ['200']
 # n_elements_list = ['10000']
 # n_threads_list = ['1', '2', '4', '8', '14', '28']
 n_threads_list = ['1', '4', '16', '32', '57', '114']
@@ -51,6 +51,7 @@ for exe in exe_list:
             for i in range(0, repeats):
                 exe_args = ['ssh',
                             'mic0',
+                            'bash',
                             '/home/iliakis/export-and-exec.sh',
                             'cmd',
                             exe_dir + exe,

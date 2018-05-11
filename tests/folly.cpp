@@ -28,8 +28,15 @@ void producer(int id)
     chrono::time_point<chrono::high_resolution_clock> start;
     chrono::duration<double> elapsed_time(0.0);
     long int i = 0;
-    if (proc_bind_thread(id) < 0){
-        cout << "Producer["<<id<<"] Something went wrong with the binding\n";
+#ifdef __MIC__
+    if (proc_bind_thread(2 * id) < 0)
+
+#else
+
+    if (proc_bind_thread(id) < 0)
+#endif
+    {
+        cout << "Producer[" << id << "] Something went wrong with the binding\n";
     }
     fence++;
     while (fence < 2 * N_threads) ;
@@ -52,8 +59,16 @@ void consumer(int id)
     chrono::time_point<chrono::high_resolution_clock> start;
     chrono::duration<double> elapsed_time(0.0);
     long int i = 0;
-    if (proc_bind_thread(id+NUM_CORES) < 0){
-        cout << "Producer["<<id<<"] Something went wrong with the binding\n";
+
+#ifdef __MIC__
+    if (proc_bind_thread(2 * id + 1) < 0)
+
+#else
+
+    if (proc_bind_thread(id + NUM_CORES) < 0)
+#endif
+    {
+        cout << "Producer[" << id << "] Something went wrong with the binding\n";
     }
 
     fence++;
@@ -100,13 +115,13 @@ int main(int argc, char *argv[])
     }
 
     auto max_producer_time = *std::max_element(producer_times.begin(),
-                              producer_times.end());
+                             producer_times.end());
 
     auto max_consumer_time = *std::max_element(consumer_times.begin(),
-                              consumer_times.end());
+                             consumer_times.end());
 
-    double mean_producer_throughput = N_turns * N_elems * 2 * N_threads/ max_producer_time / 1e6;
-    double mean_consumer_throughput = N_turns * N_elems * 2 * N_threads/ max_consumer_time / 1e6;
+    double mean_producer_throughput = N_turns * N_elems * 2 * N_threads / max_producer_time / 1e6;
+    double mean_consumer_throughput = N_turns * N_elems * 2 * N_threads / max_consumer_time / 1e6;
     cout << "mean producer throughput: " << mean_producer_throughput << " Melems/sec\n";
     cout << "mean consumer throughput: " << mean_consumer_throughput << " Melems/sec\n";
     cout << "mean total throughput: "
@@ -184,28 +199,28 @@ void parse_args(int argc, char **argv)
         Option &opt = buffer[i];
         // fprintf(stdout, "Argument #%d is ", i);
         switch (opt.index()) {
-            case HELP:
-            // not possible, because handled further above and exits the program
-            case N_TURNS:
-                N_turns = atoi(opt.arg);
-                // fprintf(stdout, "--numeric with argument '%s'\n", opt.arg);
-                break;
-            case N_THREADS:
-                N_threads = atoi(opt.arg);
-                // fprintf(stdout, "--numeric with argument '%s'\n", opt.arg);
-                break;
-            case BUF_SIZE:
-                buf_size = atoi(opt.arg);
-                // fprintf(stdout, "--numeric with argument '%s'\n", opt.arg);
-                break;
-            case N_ELEMENTS:
-                N_elems = atoi(opt.arg);
-                // fprintf(stdout, "--numeric with argument '%s'\n", opt.arg);
-                break;
-            case UNKNOWN:
-                // not possible because Arg::Unknown returns ARG_ILLEGAL
-                // which aborts the parse with an error
-                break;
+        case HELP:
+        // not possible, because handled further above and exits the program
+        case N_TURNS:
+            N_turns = atoi(opt.arg);
+            // fprintf(stdout, "--numeric with argument '%s'\n", opt.arg);
+            break;
+        case N_THREADS:
+            N_threads = atoi(opt.arg);
+            // fprintf(stdout, "--numeric with argument '%s'\n", opt.arg);
+            break;
+        case BUF_SIZE:
+            buf_size = atoi(opt.arg);
+            // fprintf(stdout, "--numeric with argument '%s'\n", opt.arg);
+            break;
+        case N_ELEMENTS:
+            N_elems = atoi(opt.arg);
+            // fprintf(stdout, "--numeric with argument '%s'\n", opt.arg);
+            break;
+        case UNKNOWN:
+            // not possible because Arg::Unknown returns ARG_ILLEGAL
+            // which aborts the parse with an error
+            break;
         }
     }
 }

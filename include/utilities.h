@@ -6,7 +6,7 @@
 // Kostis
 #include <sched.h>
 const int NUM_CORES = 28;
-
+const int MIC_CORES = 228;
 
 static cpu_set_t    full_cs;
 cpu_set_t* proc_get_full_set(void)
@@ -35,10 +35,15 @@ static inline int proc_bind_thread (int cpu_id)
 {
     cpu_set_t   cpu_set;
 
-    CPU_ZERO (&cpu_set);
-    CPU_SET (cpu_id, &cpu_set);
-
-    return sched_setaffinity (0, sizeof (cpu_set), &cpu_set);
+    #ifdef __MIC__
+        CPU_ZERO (&cpu_set);
+        CPU_SET ((cpu_id+1) % MIC_CORES, &cpu_set);
+        return sched_setaffinity (0, sizeof(cpu_set), &cpu_set)
+    #else
+        CPU_ZERO (&cpu_set);
+        CPU_SET (cpu_id, &cpu_set);
+        return sched_setaffinity (0, sizeof (cpu_set), &cpu_set);
+    #endif
 }
 
 static inline int proc_unbind_thread ()

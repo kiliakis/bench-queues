@@ -28,8 +28,15 @@ void producer(int id)
     chrono::time_point<chrono::high_resolution_clock> start;
     chrono::duration<double> elapsed_time(0.0);
     long int i = 0;
-    if (proc_bind_thread(id) < 0){
-        cout << "Producer["<<id<<"] Something went wrong with the binding\n";
+#ifdef __MIC__
+    if (proc_bind_thread(2 * id) < 0)
+
+#else
+
+    if (proc_bind_thread(id) < 0)
+#endif
+    {
+        cout << "Producer[" << id << "] Something went wrong with the binding\n";
     }
     fence++;
     while (fence < 2 * N_threads) ;
@@ -52,8 +59,16 @@ void consumer(int id)
     chrono::time_point<chrono::high_resolution_clock> start;
     chrono::duration<double> elapsed_time(0.0);
     long int i = 0;
-    if (proc_bind_thread(id+NUM_CORES) < 0){
-        cout << "Producer["<<id<<"] Something went wrong with the binding\n";
+
+#ifdef __MIC__
+    if (proc_bind_thread(2 * id + 1) < 0)
+
+#else
+
+    if (proc_bind_thread(id + NUM_CORES) < 0)
+#endif
+    {
+        cout << "Producer[" << id << "] Something went wrong with the binding\n";
     }
 
     fence++;
