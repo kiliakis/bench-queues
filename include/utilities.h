@@ -38,7 +38,7 @@ static inline int proc_bind_thread (int cpu_id)
     #ifdef __MIC__
         CPU_ZERO (&cpu_set);
         CPU_SET ((cpu_id+1) % MIC_CORES, &cpu_set);
-        return sched_setaffinity (0, sizeof(cpu_set), &cpu_set)
+        return sched_setaffinity (0, sizeof(cpu_set), &cpu_set);
     #else
         CPU_ZERO (&cpu_set);
         CPU_SET (cpu_id, &cpu_set);
