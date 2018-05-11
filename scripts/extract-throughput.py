@@ -42,24 +42,20 @@ def extract_results(input, out):
                     continue
                 records.append([exe, threads, k, elems, turns,
                                 np.mean(v), np.std(v)])
-                print file
+                print(file)
                 percent = 100.0 * np.std(v) / np.mean(v)
                 if percent > 10:
-                    print "The previous file has %.2f %% error" % percent
+                    print("The previous file has %.2f %% error" % percent)
     records.sort(key=lambda a: (a[0], int(a[1]), a[2]))
-    writer = csv.writer(open(out, 'w'), lineterminator='\n', delimiter=',')
+    writer = csv.writer(open(out, 'w'), lineterminator='\n', delimiter='\t')
     writer.writerow(header)
     writer.writerows(records)
 
 
-def import_results(output_file):
-    d = np.loadtxt(output_file, dtype='str')
-    return d.tolist()
-
 
 if __name__ == '__main__':
     if len(sys.argv) < 3:
-        print "You should specify input directory and output file"
+        print("You should specify input directory and output file")
         exit(-1)
     input_dir = sys.argv[1]
     output_file = sys.argv[2]

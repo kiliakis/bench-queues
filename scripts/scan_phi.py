@@ -11,7 +11,7 @@ import time
 
 project_dir = '/home/iliakis/git/bench-queues/'
 exe_dir = '/home/iliakis/bench-queues/'
-outfiles = '/home/iliakis/git/bench-queues/results/raw/v-pair/'
+outfiles = '/home/iliakis/git/bench-queues/results/raw/pair2/'
 
 # exe_list = ['boost-static', 'boost-static-push', 'boost-static-pop',
 #             'boost-dynamic', 'boost-dynamic-push', 'boost-dynamic-pop',
@@ -19,13 +19,14 @@ outfiles = '/home/iliakis/git/bench-queues/results/raw/v-pair/'
 #             'circularfifo', 'circularfifo-push', 'circularfifo-pop'
 #             ]
 
-exe_list = ['cameron', 'cameron-push', 'cameron-pop']
+exe_list = ['boost-static', 'boost-dynamic', 'cameron', 'folly', 'circularfifo']
+# exe_list = ['cameron', 'cameron-push', 'cameron-pop']
 
-n_turns_list = ['10']
+n_turns_list = ['1000']
 # n_elements_list = ['10000']
 # n_threads_list = ['1', '2', '4', '8', '14', '28']
 n_threads_list = ['1', '4', '16', '32', '57', '114']
-repeats = 10
+repeats = 5
 
 # os.chdir(exe_dir)
 total_sims = len(n_turns_list) * len(n_threads_list) * len(exe_list) * repeats
@@ -54,7 +55,7 @@ for exe in exe_list:
                             'cmd',
                             exe_dir + exe,
                             '-e' + n_elems,
-                            '-b' + '100000',
+                            '-b' + '1000',
                             '-t' + n_turns,
                             '-m' + n_threads
                             ]

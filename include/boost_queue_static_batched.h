@@ -9,7 +9,7 @@
 #ifdef QUEUE_SIZE
 static int const queue_size = QUEUE_SIZE;
 #else
-static int const queue_size = 100000;
+static int const queue_size = 1000;
 #endif
 static int const buffer_size = queue_size / 100;
 //#define queue_size 10000

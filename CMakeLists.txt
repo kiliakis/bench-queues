@@ -69,7 +69,7 @@ set(EXECUTABLE_FILES
    tests/folly-push.cpp
    tests/folly-pop.cpp
    tests/boost-static.cpp
-   # tests/boost-static-batched.cpp
+   tests/boost-static-batched.cpp
    # tests/boost-static-batched-push.cpp
    # tests/boost-static-batched-pop.cpp
    tests/boost-static-push.cpp

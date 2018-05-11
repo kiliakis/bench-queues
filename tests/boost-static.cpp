@@ -25,14 +25,17 @@ void parse_args(int argc, char **argv);
 
 void producer(int id)
 {
+    chrono::time_point<chrono::high_resolution_clock> start;
+    chrono::duration<double> elapsed_time(0.0);
+    long int i = 0;
+    if (proc_bind_thread(id) < 0){
+        cout << "Producer["<<id<<"] Something went wrong with the binding\n";
+    }
     fence++;
     while (fence < 2 * N_threads) ;
 
-    chrono::time_point<chrono::high_resolution_clock> start;
-    chrono::duration<double> elapsed_time(0.0);
     start = chrono::system_clock::now();
 
-    long int i = 0;
     while (i < N_elems) {
         if (queues[id].push({i, i}))
             i++;
@@ -46,13 +49,17 @@ void producer(int id)
 
 void consumer(int id)
 {
-    fence++;
-    while (fence < 2 * N_threads) ;
     chrono::time_point<chrono::high_resolution_clock> start;
     chrono::duration<double> elapsed_time(0.0);
+    long int i = 0;
+    if (proc_bind_thread(id+NUM_CORES) < 0){
+        cout << "Producer["<<id<<"] Something went wrong with the binding\n";
+    }
+
+    fence++;
+    while (fence < 2 * N_threads) ;
     start = chrono::system_clock::now();
 
-    long int i = 0;
     while (i < N_elems) {
         data_t res;
         if (queues[id].pop(res)) {
@@ -71,7 +78,7 @@ int main(int argc, char *argv[])
     parse_args(argc, argv);
     cout << "Number of turns: " <<  N_turns << "\n";
     cout << "Number of elements: " << N_elems << "\n";
-    cout << "Number of threads: " <<  N_threads << "\n";
+    cout << "Number of threads: " <<  2 * N_threads << "\n";
     cout << "Buffer size: " <<  buf_size << "\n";
 
     producer_times.resize(N_threads, 0);
@@ -91,28 +98,16 @@ int main(int argc, char *argv[])
         for (auto &th : threads) th.join();
     }
 
-    // for (auto &t : producer_times) t = t / N_turns;
-    // for (auto &t : consumer_times) t = t / N_turns;
+    auto max_producer_time = *std::max_element(producer_times.begin(),
+                              producer_times.end());
 
-    auto mean_producer_time = mean(producer_times);
-    // auto std_producer_time = stdev(producer_times, mean_producer_time);
+    auto max_consumer_time = *std::max_element(consumer_times.begin(),
+                              consumer_times.end());
 
-    auto mean_consumer_time = mean(consumer_times);
-    // auto std_consumer_time = stdev(consumer_times, mean_consumer_time);
-
-    double mean_producer_throughput = N_turns * N_elems / mean_producer_time / 1e6;
-    double mean_consumer_throughput = N_turns * N_elems / mean_consumer_time / 1e6;
-
-    // cout << "boost dynamic\n";
-
-    // cout << "mean producer time: " << mean_producer_time << " sec\n";
-    // cout << "mean producer time std: " << std_producer_time << " sec\n";
+    double mean_producer_throughput = N_turns * N_elems * 2 * N_threads/ max_producer_time / 1e6;
+    double mean_consumer_throughput = N_turns * N_elems * 2 * N_threads/ max_consumer_time / 1e6;
     cout << "mean producer throughput: " << mean_producer_throughput << " Melems/sec\n";
-
-    // cout << "mean consumer time: " << mean_consumer_time << " sec\n";
-    // cout << "mean consumer time std: " << std_consumer_time << " sec\n";
     cout << "mean consumer throughput: " << mean_consumer_throughput << " Melems/sec\n";
-
     cout << "mean total throughput: "
          << mean_consumer_throughput + mean_producer_throughput
          << " Melems/sec\n";
@@ -188,28 +183,28 @@ void parse_args(int argc, char **argv)
         Option &opt = buffer[i];
         // fprintf(stdout, "Argument #%d is ", i);
         switch (opt.index()) {
-            case HELP:
-            // not possible, because handled further above and exits the program
-            case N_TURNS:
-                N_turns = atoi(opt.arg);
-                // fprintf(stdout, "--numeric with argument '%s'\n", opt.arg);
-                break;
-            case N_THREADS:
-                N_threads = atoi(opt.arg);
-                // fprintf(stdout, "--numeric with argument '%s'\n", opt.arg);
-                break;
-            case BUF_SIZE:
-                buf_size = atoi(opt.arg);
-                // fprintf(stdout, "--numeric with argument '%s'\n", opt.arg);
-                break;
-            case N_ELEMENTS:
-                N_elems = atoi(opt.arg);
-                // fprintf(stdout, "--numeric with argument '%s'\n", opt.arg);
-                break;
-            case UNKNOWN:
-                // not possible because Arg::Unknown returns ARG_ILLEGAL
-                // which aborts the parse with an error
-                break;
+        case HELP:
+        // not possible, because handled further above and exits the program
+        case N_TURNS:
+            N_turns = atoi(opt.arg);
+            // fprintf(stdout, "--numeric with argument '%s'\n", opt.arg);
+            break;
+        case N_THREADS:
+            N_threads = atoi(opt.arg);
+            // fprintf(stdout, "--numeric with argument '%s'\n", opt.arg);
+            break;
+        case BUF_SIZE:
+            buf_size = atoi(opt.arg);
+            // fprintf(stdout, "--numeric with argument '%s'\n", opt.arg);
+            break;
+        case N_ELEMENTS:
+            N_elems = atoi(opt.arg);
+            // fprintf(stdout, "--numeric with argument '%s'\n", opt.arg);
+            break;
+        case UNKNOWN:
+            // not possible because Arg::Unknown returns ARG_ILLEGAL
+            // which aborts the parse with an error
+            break;
         }
     }
 }

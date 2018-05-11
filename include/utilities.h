@@ -1,5 +1,65 @@
 #pragma once
 #include <optionparser.h>
+#include <stddef.h>
+#include <unistd.h>
+#include <algorithm>
+// Kostis
+#include <sched.h>
+const int NUM_CORES = 28;
+
+
+static cpu_set_t    full_cs;
+cpu_set_t* proc_get_full_set(void)
+{
+    static int          inited = 0;
+
+    if (inited == 0) {
+        int i;
+        int n_cpus;
+
+        CPU_ZERO (&full_cs);
+        n_cpus = sysconf(_SC_NPROCESSORS_ONLN);
+        for (i = 0; i < n_cpus; i++) {
+            CPU_SET(i, &full_cs);
+        }
+
+        inited = 1;
+    }
+
+    return &full_cs;
+}
+
+/* Bind the calling thread to run on CPU_ID. 
+   Returns 0 if successful, -1 if failed. */
+static inline int proc_bind_thread (int cpu_id)
+{
+    cpu_set_t   cpu_set;
+
+    CPU_ZERO (&cpu_set);
+    CPU_SET (cpu_id, &cpu_set);
+
+    return sched_setaffinity (0, sizeof (cpu_set), &cpu_set);
+}
+
+static inline int proc_unbind_thread ()
+{
+    return sched_setaffinity (0, sizeof (cpu_set_t), proc_get_full_set());
+}
+
+static inline int proc_get_cpuid (void)
+{
+    int i, ret;
+    cpu_set_t cpu_set;
+    
+    ret = sched_getaffinity (0, sizeof (cpu_set), &cpu_set);
+    if (ret < 0) return -1;
+
+    for (i = 0; i < CPU_SETSIZE; ++i)
+    {
+        if (CPU_ISSET (i, &cpu_set)) break;
+    }
+    return i;
+}
 
 static inline double mean(std::vector<double> const &v)
 {

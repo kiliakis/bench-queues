@@ -32,12 +32,12 @@ void producer(int id)
 
     long int i = 0;
     while (i < N_elems) {
-        if (queues[id].push_batch(i))
+        if (queues[id].push(i))
             i++;
     }
     // printf("[Producer %d] Going for the last push!\n", id);
 
-    queues[id].push_final();
+    // queues[id].push_final();
 
     elapsed_time = chrono::system_clock::now() - start;
     producer_times[id] += elapsed_time.count();
@@ -54,21 +54,22 @@ void consumer(int id)
     start = chrono::system_clock::now();
 
     long int i = 0;
-    auto f = [](data_t e) {return;};
+    data_t sum = 0;
+    auto f = [&sum](data_t e) { sum+=e; return;};
 
     while (i < N_elems) {
-        data_t res;
-        // i += queues[id].consume_all(f);
+        // data_t res;
+        i += queues[id].consume_all(f);
         // cout << i << "\n";
-        if (queues[id].pop(res)) {
-            i++;
-        }
+        // if (queues[id].pop(res)) {
+        //     i++;
+        // }
     }
 
     elapsed_time = chrono::system_clock::now() - start;
     consumer_times[id] += elapsed_time.count();
 
-    // printf("[Consumer %d] I am over!\n", id);
+    printf("[Consumer %d] I am over!, the sum is: %lf\n", id, sum);
 }
 
 int main(int argc, char *argv[])

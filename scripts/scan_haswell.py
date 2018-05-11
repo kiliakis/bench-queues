@@ -10,8 +10,8 @@ import time
 #    '38 11 39 12 40 13 41 14 42 15 43 16 44 17 45 18 46 19 47 20 48 21 49 22 50 23 51 24 52 25 53 26 54 27 55'
 
 project_dir = '/afs/cern.ch/work/k/kiliakis/git/thesis/bench-queues/'
-exe_dir = project_dir + 'build/bench-queues/'
-outfiles = '/afs/cern.ch/work/k/kiliakis/git/thesis/bench-queues/results/raw/v-pair/'
+exe_dir = project_dir + 'build_gcc/bench-queues/'
+outfiles = '/afs/cern.ch/work/k/kiliakis/git/thesis/bench-queues/results/raw/pair3/'
 
 # exe_list = ['boost-static', 'boost-static-push', 'boost-static-pop',
 #             'boost-dynamic', 'boost-dynamic-push', 'boost-dynamic-pop',
@@ -19,18 +19,18 @@ outfiles = '/afs/cern.ch/work/k/kiliakis/git/thesis/bench-queues/results/raw/v-p
 #             'circularfifo', 'circularfifo-push', 'circularfifo-pop'
 #             ]
 
-exe_list = ['cameron', 'cameron-push', 'cameron-pop']
+exe_list = ['boost-static', 'boost-dynamic', 'cameron', 'folly', 'circularfifo']
 
 # exe_list = ['circularfifo-push', 'circularfifo-pop' ]
 # exe_list = ['histogram4']
-n_turns_list = ['10']
+n_turns_list = ['1000']
 # n_elements_list = ['10000']
 n_threads_list = ['1', '2', '4', '8', '14', '28']
-repeats = 10
+repeats = 5
 
 # os.chdir(exe_dir)
 total_sims = len(n_turns_list) * len(n_threads_list) * len(exe_list) * repeats
-print "Total runs: ", total_sims
+print("Total runs: ", total_sims)
 
 current_sim = 0
 for exe in exe_list:
@@ -51,16 +51,16 @@ for exe in exe_list:
             for i in range(0, repeats):
                 exe_args = [exe_dir + exe,
                             '-e' + n_elems,
-                            '-b' + '100000',
+                            '-b' + '1000',
                             '-t' + n_turns,
                             '-m' + n_threads
                             ]
-                print exe, n_turns, n_elems, n_threads, i
+                print(exe, n_turns, n_elems, n_threads, i)
                 output = subprocess.check_output(exe_args)
                 current_sim += 1
-                stdout.write(output)
+                stdout.write(output.decode('utf-8'))
                 # time = output.split(
                 #     'Elapsed time: ')[1].split('sec')[0]
                 # res.write(time+'\n')
-                print "%.2f %% is completed" % (100.0 * current_sim /
-                                                total_sims)
+                print("%.2f %% is completed" % (100.0 * current_sim /
+                                                total_sims))
